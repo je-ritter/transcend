@@ -1,4 +1,4 @@
-var Game = {
+let Game = {
   display: null,
   map: {},
   engine: null,
@@ -12,7 +12,7 @@ var Game = {
       
       this._generateMap();
       
-      var scheduler = new ROT.Scheduler.Simple();
+      let scheduler = new ROT.Scheduler.Simple();
       scheduler.add(this.player, true);
       scheduler.add(this.enemy, true);
 
@@ -21,13 +21,13 @@ var Game = {
   },
   
   _generateMap: function() {
-      var digger = new ROT.Map.Digger();
-      var freeCells = [];
+      let digger = new ROT.Map.Digger();
+      let freeCells = [];
       
-      var digCallback = function(x, y, value) {
+      let digCallback = function(x, y, value) {
           if (value) { return; }
           
-          var key = x+","+y;
+          let key = x+","+y;
           this.map[key] = ".";
           freeCells.push(key);
       }
@@ -41,34 +41,34 @@ var Game = {
   },
   
   _createBeing: function(what, freeCells) {
-      var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-      var key = freeCells.splice(index, 1)[0];
-      var parts = key.split(",");
-      var x = parseInt(parts[0]);
-      var y = parseInt(parts[1]);
+      let index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+      let key = freeCells.splice(index, 1)[0];
+      let parts = key.split(",");
+      let x = parseInt(parts[0]);
+      let y = parseInt(parts[1]);
       return new what(x, y);
   },
   
   _generateBoxes: function(freeCells) {
-      for (var i=0;i<10;i++) {
-          var index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
-          var key = freeCells.splice(index, 1)[0];
+      for (let i=0;i<10;i++) {
+          let index = Math.floor(ROT.RNG.getUniform() * freeCells.length);
+          let key = freeCells.splice(index, 1)[0];
           this.map[key] = "*";
           if (!i) { this.treasure = key; } /* first box contains an treasure */
       }
   },
   
   _drawWholeMap: function() {
-      for (var key in this.map) {
-          var parts = key.split(",");
-          var x = parseInt(parts[0]);
-          var y = parseInt(parts[1]);
+      for (let key in this.map) {
+          let parts = key.split(",");
+          let x = parseInt(parts[0]);
+          let y = parseInt(parts[1]);
           this.display.draw(x, y, this.map[key]);
       }
   }
 };
 
-var Player = function(x, y) {
+let Player = function(x, y) {
   this._x = x;
   this._y = y;
   this._draw();
@@ -84,13 +84,13 @@ Player.prototype.act = function() {
 }
   
 Player.prototype.handleEvent = function(e) {
-  var code = e.keyCode;
+  let code = e.keyCode;
   if (code == 13 || code == 32) {
       this._checkBox();
       return;
   }
 
-  var keyMap = {};
+  let keyMap = {};
   keyMap[38] = 0;
   keyMap[33] = 1;
   keyMap[39] = 2;
@@ -104,10 +104,10 @@ Player.prototype.handleEvent = function(e) {
   if (!(code in keyMap)) { return; }
 
   /* is there a free space? */
-  var dir = ROT.DIRS[8][keyMap[code]];
-  var newX = this._x + dir[0];
-  var newY = this._y + dir[1];
-  var newKey = newX + "," + newY;
+  let dir = ROT.DIRS[8][keyMap[code]];
+  let newX = this._x + dir[0];
+  let newY = this._y + dir[1];
+  let newKey = newX + "," + newY;
   if (!(newKey in Game.map)) { return; }
 
   Game.display.draw(this._x, this._y, Game.map[this._x+","+this._y]);
@@ -123,7 +123,7 @@ Player.prototype._draw = function() {
 }
   
 Player.prototype._checkBox = function() {
-  var key = this._x + "," + this._y;
+  let key = this._x + "," + this._y;
   if (Game.map[key] != "*") {
       alert("There is no box here!");
   } else if (key == Game.treasure) {
@@ -135,7 +135,7 @@ Player.prototype._checkBox = function() {
   }
 }
   
-var Enemy = function(x, y) {
+let Enemy = function(x, y) {
   this._x = x;
   this._y = y;
   this._draw();
@@ -144,16 +144,16 @@ var Enemy = function(x, y) {
 Enemy.prototype.getSpeed = function() { return 100; }
   
 Enemy.prototype.act = function() {
-  var x = Game.player.getX();
-  var y = Game.player.getY();
+  let x = Game.player.getX();
+  let y = Game.player.getY();
 
-  var passableCallback = function(x, y) {
+  let passableCallback = function(x, y) {
       return (x+","+y in Game.map);
   }
-  var astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
+  let astar = new ROT.Path.AStar(x, y, passableCallback, {topology:4});
 
-  var path = [];
-  var pathCallback = function(x, y) {
+  let path = [];
+  let pathCallback = function(x, y) {
       path.push([x, y]);
   }
   astar.compute(this._x, this._y, pathCallback);
